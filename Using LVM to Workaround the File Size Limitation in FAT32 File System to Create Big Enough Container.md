@@ -3,7 +3,7 @@
 ##Creation
 
     1. Create container files:
-        `for i in {0..1}; do truncate -s 2048M home.$i.vol; done`
+        for i in {0..1}; do truncate -s 2048M home.$i.vol; done
     2. Link the container files to loopback devices:
         losetup /dev/loop0 home.0.vol
         losetup /dev/loop1 home.1.vol
