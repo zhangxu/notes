@@ -13,37 +13,23 @@
         fdisk /dev/loop1
         #(and so on)...
     4. Or use sfdisk: [See this](http://download.vikis.lt/doc/util-linux-ng-2.17.2/sfdisk.examples)
-
     5. Create physical volumes
-
         pvcreate /dev/loop0 /dev/loop1 #(and so on)..
-
     6. (Optional) To automate steps 1 to 5
-
         for i in {3..7}; do sudo losetup /dev/loop$i home.$i.vol && echo ",,8e,," | sudo sfdisk /dev/loop$i && sudo pvcreate /dev/loop$i; done
-
     7. Create volume group
-
         vgcreate vg_home /dev/loop0 /dev/loop1
-
     8. Create logical volume
-
         lvcreate -l +100%FREE vg_home -n home
-
     9. Create encryption key file
-
-       mkdir -m 700 /opt/luks-keys
-       dd if=/dev/random of=/opt/luks-keys/home bs=1 count=256
-
+        mkdir -m 700 /opt/luks-keys
+        dd if=/dev/random of=/opt/luks-keys/home bs=1 count=256
     10. Encrypt the logical volume using the keyfile
-
-       cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 10000 luksFormat /dev/vg_home/home /opt/luks-keys/home
-       cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home
-       mkfs.ext4 /dev/mapper/home
-
+        cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 10000 luksFormat /dev/vg_home/home /opt/luks-keys/home
+        cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home
+        mkfs.ext4 /dev/mapper/home
     11. And mount:
-
-        `mount -t ext4 /dev/mapper/home /mnt/home`
+        mount -t ext4 /dev/mapper/home /mnt/home
 
 ##Add more space to the encrypted logical volume
 
