@@ -71,8 +71,7 @@
 
 ## Sequence to open the container
 
-1. `cd home`
-2. `for i in {0..7}; do losetup /dev/loop$i home.$i.vol; done`
-3. `vgchange -a y vg_home`
-4. `cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home`
-5. `mount -t ext4 /dev/mapper/home /mnt/home`
+1. `for i in {0..7}; do losetup /dev/loop$i home.$i.vol; done`
+2. `vgchange -a y vg_home`
+3. `cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home`
+4. `mount -t ext4 /dev/mapper/home /mnt/home`
