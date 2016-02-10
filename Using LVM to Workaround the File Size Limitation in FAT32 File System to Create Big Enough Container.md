@@ -56,7 +56,7 @@
 
 ##Move the loopback files around
 
-1. umount and close the container:
+1. umount and close the container: `cryptsetup close home && umount /mnt/home`
 2. Deactivate the volume group: `vg_change -a n home`
 3. Detach the loop devices: `losetup -d /dev/loop0 /dev/loop1 /dev/loop2`
 4. Move the container files to USB disk
