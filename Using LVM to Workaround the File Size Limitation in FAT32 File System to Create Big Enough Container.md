@@ -2,24 +2,18 @@
 
 ##Creation
 1. Create container files:
-    `for i in {0..1}; do truncate -s 2048M home.$i.vol; done`
+    `truncate -s 2048M home.0.vol && truncate -s 2048M home.1.vol`
 2. Link the container files to loopback devices:
-    
-    ```shell
-    losetup /dev/loop0 home.0.vol
-    losetup /dev/loop1 home.1.vol
-    #(and so on)...
-    ```
+    `losetup /dev/loop0 home.0.vol && losetup /dev/loop1 home.1.vol`
 3. Create LVM partition on each of the loopback devices:
     
     ```
-    fdisk /dev/loop0
-    fdisk /dev/loop1
-    #(and so on)...
+    fdisk /dev/loop0 #select type 8e or Linux LVM
+    fdisk /dev/loop1 #select type 8e or Linux LVM
     ```
 4. Or use sfdisk: [See this](http://download.vikis.lt/doc/util-linux-ng-2.17.2/sfdisk.examples)
 5. Create physical volumes:
-    `pvcreate /dev/loop0 /dev/loop1 #(and so on)..`
+    `pvcreate /dev/loop0 && pvcreate /dev/loop1`
 6. (Optional) To automate steps 1 to 5
     
     ```
