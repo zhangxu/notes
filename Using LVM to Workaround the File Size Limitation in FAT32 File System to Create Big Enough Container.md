@@ -68,10 +68,12 @@
 2. `vgchange -a n vg_home`
 3. `a=($(for i in {0..7}; do echo "/dev/loop$i"; done))`
 4. `losetup -d ${a[*]}`
+5. `vgscan`
 
 ## Sequence to open the container
 
 1. `for i in {0..7}; do losetup /dev/loop$i home.$i.vol; done`
+2. `vgscan`
 2. `vgchange -a y vg_home`
 3. `cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home`
 4. `mount -t ext4 /dev/mapper/home /mnt/home`
