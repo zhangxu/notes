@@ -57,6 +57,22 @@
 ##Move the loopback files around
 
 1. umount and close the container: `cryptsetup close home && umount /mnt/home`
-2. Deactivate the volume group: `vg_change -a n home`
+2. Deactivate the volume group: `vgchange -a n home`
 3. Detach the loop devices: `losetup -d /dev/loop0 /dev/loop1 /dev/loop2`
 4. Move the container files to USB disk
+
+##Sequence to close the container
+
+1. `umount /mnt/home`
+2. `cryptsetup close home`
+2. `vgchange -a n vg_home`
+3. `a=($(for i in {0..7}; do echo "/dev/loop$i"; done))`
+4. `losetup -d ${a[*]}`
+
+## Sequence to open the container
+
+1. `cd home`
+2. `for i in {0..7}; do losetup /dev/loop$i home.$i.vol; done`
+3. `vgchange -a y vg_home`
+4. `cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home`
+5. `mount -t ext4 /dev/mapper/home /mnt/home`
