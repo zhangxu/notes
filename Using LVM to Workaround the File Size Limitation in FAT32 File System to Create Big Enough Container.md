@@ -69,6 +69,24 @@
 3. `a=($(for i in {0..7}; do echo "/dev/loop$i"; done))`
 4. `losetup -d ${a[*]}`
 5. `vgscan`
+6. script
+    ```
+    #!/bin/bash
+
+    mountpoint -q /mnt/home && sudo umount /mnt/home
+    
+    sudo cryptsetup status home > /dev/null 2>&1 && sudo cryptsetup close home
+    
+    sudo vgs vg_home > /dev/null 2>&1 && sudo vgchange -a n vg_home
+    
+    files=(`ls -v home.*.vol`)
+    
+    for file in ${files[@]}; do
+        sudo losetup -d $(losetup -j `pwd`/$file|awk -F: '{print $1}')
+    done
+    
+    sudo vgscan && sudo pvscan
+    ```
 
 ## Sequence to open the container
 
@@ -77,3 +95,15 @@
 2. `vgchange -a y vg_home`
 3. `cryptsetup -d /opt/luks-keys/home open --type luks /dev/vg_home/home home`
 4. `mount -t ext4 /dev/mapper/home /mnt/home`
+5. script
+    ```
+    #!/bin/bash
+    files=(`ls -v home.*.vol`)
+    
+    for file in ${files[@]}; do
+        sudo losetup `losetup -f` $file
+    done
+    
+    sleep 1
+    sudo pvscan && sudo vgscan && luks-open /dev/vg_home/home home
+    ```
